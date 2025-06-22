@@ -1,0 +1,14 @@
+{
+  "extends": "config/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "out-tsc",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": ["ES2022", "DOM"]
+  },
+  "include": [],
+  "references": [
+    {"path": "./tsconfig.lib.json"},
+    {"path": "./tsconfig.test.json"}
+  ]
+}

@@ -27,6 +27,7 @@ export const defineViteConfig = (config: UserConfig): UserConfig =>
           'packages/react-dom/src',
         ),
         '@floating-ui/vue': path.resolve(basePath, 'packages/vue/src'),
+        '@floating-ui/angular': path.resolve(basePath, 'packages/angular/src'),
       },
     },
     test: {

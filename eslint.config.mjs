@@ -1,9 +1,9 @@
-import globals from 'globals';
 import eslint from '@eslint/js';
+import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import prettierRecommended from 'eslint-plugin-prettier/recommended';
 
 export default tseslint.config(
   {
@@ -60,6 +60,13 @@ export default tseslint.config(
       react: {
         version: '18',
       },
+    },
+  },
+  {
+    files: ['packages/angular/**/*.{js,ts}'],
+    rules: {
+      'react-hooks/rules-of-hooks': 'off',
+      'react-hooks/exhaustive-deps': 'off',
     },
   },
   {

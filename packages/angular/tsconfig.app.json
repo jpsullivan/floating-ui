@@ -1,0 +1,54 @@
+{
+  "extends": "config/tsconfig.base.json",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "noEmit": false,
+    "target": "es2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "composite": false,
+    "noEmitOnError": false,
+
+    /* Bundler mode */
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force"
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  // "include": ["src/**/*.ts"],
+  "include": [
+    "test/**/*.ts",
+    "vite.config.mts",
+    "src",
+    "../core/src",
+    "../dom/src",
+    "../utils/src"
+  ],
+  "references": [
+    {"path": "./tsconfig.lib.json"},
+    {"path": "../../../../dom/tsconfig.lib.json"},
+    {"path": "../../../../utils/tsconfig.lib.json"}
+  ]
+}

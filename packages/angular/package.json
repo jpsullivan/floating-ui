@@ -1,0 +1,87 @@
+{
+  "name": "@floating-ui/angular",
+  "version": "0.1.0",
+  "description": "Floating UI for Angular",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/floating-ui.angular.umd.js",
+  "module": "./dist/floating-ui.angular.esm.js",
+  "unpkg": "./dist/floating-ui.angular.umd.min.js",
+  "types": "./dist/floating-ui.angular.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/floating-ui.angular.d.mts",
+        "default": "./dist/floating-ui.angular.mjs"
+      },
+      "types": "./dist/floating-ui.angular.d.ts",
+      "module": "./dist/floating-ui.angular.esm.js",
+      "default": "./dist/floating-ui.angular.umd.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "clean": "rimraf dist out-tsc",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "build": "rollup -c",
+    "build:api": "build-api --tsc tsconfig.lib.json",
+    "dev": "node --inspect ./node_modules/vite/bin/vite --open --debug",
+    "dev2": "vite --open --debug",
+    "publint": "publint",
+    "prepack": "compat-exports",
+    "typecheck": "tsc -b"
+  },
+  "author": "atomiks",
+  "license": "MIT",
+  "bugs": "https://github.com/floating-ui/floating-ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/floating-ui/floating-ui.git",
+    "directory": "packages/angular"
+  },
+  "homepage": "https://floating-ui.com/docs/angular",
+  "keywords": [
+    "tooltip",
+    "popover",
+    "dropdown",
+    "menu",
+    "popup",
+    "positioning",
+    "angular"
+  ],
+  "peerDependencies": {
+    "@angular/core": ">=17.0.0",
+    "@angular/common": ">=17.0.0"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.0.0",
+    "@floating-ui/utils": "workspace:^"
+  },
+  "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^1.18.0",
+    "@angular-devkit/build-angular": "^20.0.0",
+    "@angular/build": "^20.0.3",
+    "@angular/cli": "^20.0.3",
+    "@angular/common": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-browser-dynamic": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@types/node": "^20.0.0",
+    "config": "workspace:*",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.3.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.3.5",
+    "zone.js": "~0.15.0"
+  }
+}
