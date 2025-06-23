@@ -3,7 +3,7 @@ import type {ElementRef} from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
+  forwardRef,
   input,
   signal,
   viewChild,
@@ -11,9 +11,9 @@ import {
 import {
   autoUpdate,
   flip,
+  injectFloating,
   offset,
   shift,
-  useFloating,
   type Placement,
 } from '../../../../src/index';
 import {ButtonComponent} from '../lib/button.component';
@@ -21,7 +21,7 @@ import {ButtonComponent} from '../lib/button.component';
 @Component({
   selector: 'app-popover-demo',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgStyle],
+  imports: [NgStyle, forwardRef(() => PopoverDemoComponent)],
   template: `
     <span class="inline-block">
       <span #reference (click)="togglePopover()" class="inline-block">
@@ -43,6 +43,24 @@ import {ButtonComponent} from '../lib/button.component';
           <p [id]="descriptionId" class="text-gray-600 mb-4">
             {{ description() }}
           </p>
+
+          @if (title() === 'Nested Demo') {
+            <div class="mb-4">
+              <app-popover-demo
+                title="Level 2"
+                description="This is a nested popover! Click outside or press Escape to close."
+                placement="top"
+                [parentId]="nodeId"
+              >
+                <button
+                  class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors mr-2"
+                >
+                  Open Nested
+                </button>
+              </app-popover-demo>
+            </div>
+          }
+
           <button
             (click)="closePopover()"
             class="px-3 py-1 bg-gray-100 text-gray-800 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
@@ -52,19 +70,13 @@ import {ButtonComponent} from '../lib/button.component';
         </div>
       }
     </span>
-
-    @if (isOpen()) {
-      <div
-        class="fixed inset-0 bg-black bg-opacity-25 z-40"
-        (click)="closePopover()"
-      ></div>
-    }
   `,
 })
 export class PopoverDemoComponent {
   title = input.required<string>();
   description = input.required<string>();
   placement = input<Placement>('bottom');
+  parentId = input<string>();
 
   protected readonly reference =
     viewChild.required<ElementRef<HTMLElement>>('reference');
@@ -79,18 +91,30 @@ export class PopoverDemoComponent {
     .toString(36)
     .slice(2)}`;
 
-  private readonly floatingInstance = useFloating(
-    computed(() => this.reference().nativeElement),
-    computed(() => this.floating()?.nativeElement || null),
-    {
-      open: this.isOpen,
-      placement: this.placement,
-      middleware: [offset(10), flip(), shift({padding: 8})],
-      whileElementsMounted: autoUpdate,
+  private readonly floatingInstance = injectFloating({
+    open: this.isOpen,
+    placement: this.placement,
+    middleware: [offset(10), flip(), shift({padding: 8})],
+    whileElementsMounted: autoUpdate,
+    elements: () => ({
+      reference: this.reference()?.nativeElement,
+      floating: this.floating()?.nativeElement,
+    }),
+    dismiss: {
+      escapeKey: true,
+      outsidePress: true,
+      restoreFocus: true,
+      escapeKeyBubbles: true,
     },
-  );
+    parentId: this.parentId(),
+    onDismiss: () => {
+      this.isOpen.set(false);
+      // Focus restoration is handled by the library
+    },
+  });
 
   protected readonly floatingStyles = this.floatingInstance.floatingStyles;
+  protected readonly nodeId = this.floatingInstance.nodeId || '';
 
   protected togglePopover(): void {
     this.isOpen.update((open) => !open);
@@ -136,6 +160,14 @@ export class PopoverDemoComponent {
           >
             <app-button>Open Left Popover</app-button>
           </app-popover-demo>
+
+          <app-popover-demo
+            title="Nested Demo"
+            description="This popover contains another popover inside!"
+            placement="right"
+          >
+            <app-button>Open Nested Popover</app-button>
+          </app-popover-demo>
         </div>
       </div>
 
@@ -143,10 +175,12 @@ export class PopoverDemoComponent {
         <h2 class="text-2xl font-semibold mb-4">Features</h2>
         <ul class="space-y-2">
           <li>Click to toggle open/close</li>
-          <li>Modal overlay with click-to-close</li>
+          <li>Click outside to dismiss</li>
+          <li>Escape key to dismiss (restores focus to trigger)</li>
+          <li>Nested popover support</li>
+          <li>Non-modal popover design</li>
           <li>Proper ARIA labeling for accessibility</li>
           <li>Automatic positioning with middleware</li>
-          <li>Focus management</li>
         </ul>
       </div>
     </div>

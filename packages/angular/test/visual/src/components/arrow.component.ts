@@ -16,7 +16,7 @@ import {
   shift,
   type Placement,
 } from '@floating-ui/dom';
-import {useFloating} from '../../../../src/index';
+import {injectFloating, createArrowPath} from '../../../../src/index';
 import {ButtonComponent} from '../lib/button.component';
 
 @Component({
@@ -45,14 +45,18 @@ import {ButtonComponent} from '../lib/button.component';
         >
           {{ label() }}
 
-          <!-- Arrow SVG -->
+          <!-- Arrow SVG with React-like dimensions and path -->
           <svg
             #arrow
-            class="absolute w-3 h-3 text-gray-900"
+            class="absolute text-gray-900"
             [ngStyle]="arrowStyles()"
-            viewBox="0 0 12 12"
+            [attr.width]="14"
+            [attr.height]="14"
+            [attr.viewBox]="'0 0 14 7'"
+            style="pointer-events: none;"
+            aria-hidden="true"
           >
-            <path d="M0,0 L12,0 L6,12 Z" fill="currentColor" />
+            <path [attr.d]="arrowPath()" fill="currentColor" />
           </svg>
         </div>
       }
@@ -71,28 +75,32 @@ export class ArrowDemoComponent {
 
   protected readonly isOpen = signal(false);
 
-  private readonly floatingInstance = useFloating(
-    computed(() => this.reference().nativeElement),
-    computed(() => this.floating()?.nativeElement || null),
-    {
-      open: this.isOpen,
-      placement: this.placement,
-      middleware: computed(() => {
-        const arrowEl = this.arrowElement()?.nativeElement;
-        return [
-          offset(8),
-          flip(),
-          shift({padding: 8}),
-          ...(arrowEl ? [arrow({element: arrowEl})] : []),
-        ];
-      }),
-      whileElementsMounted: autoUpdate,
-    },
-  );
+  private readonly floatingInstance = injectFloating({
+    open: this.isOpen,
+    placement: this.placement,
+    elements: () => ({
+      reference: this.reference()?.nativeElement,
+      floating: this.floating()?.nativeElement,
+    }),
+    middleware: computed(() => {
+      const arrowEl = this.arrowElement()?.nativeElement;
+      return [
+        offset(8),
+        flip(),
+        shift({padding: 8}),
+        ...(arrowEl ? [arrow({element: arrowEl})] : []),
+      ];
+    }),
+    whileElementsMounted: autoUpdate,
+  });
 
   protected readonly floatingStyles = this.floatingInstance.floatingStyles;
   protected readonly middlewareData = this.floatingInstance.middlewareData;
   protected readonly placement_actual = this.floatingInstance.placement;
+
+  protected readonly arrowPath = computed(() =>
+    createArrowPath({width: 14, height: 7, tipRadius: 0}),
+  );
 
   protected readonly arrowStyles = computed(() => {
     const arrowData = this.middlewareData().arrow;
@@ -107,17 +115,17 @@ export class ArrowDemoComponent {
     const arrowY = arrowData.y ?? 0;
 
     const rotations = {
-      top: 'rotate(180deg)',
-      bottom: 'rotate(0deg)',
-      left: 'rotate(90deg)',
-      right: 'rotate(-90deg)',
+      top: '',
+      bottom: 'rotate(180deg)',
+      left: 'rotate(-90deg)',
+      right: 'rotate(90deg)',
     };
 
     const positions = {
-      top: {bottom: '-3px', left: `${arrowX}px`},
-      bottom: {top: '-3px', left: `${arrowX}px`},
-      left: {right: '-3px', top: `${arrowY}px`},
-      right: {left: '-3px', top: `${arrowY}px`},
+      top: {bottom: '-7px', left: `${arrowX}px`},
+      bottom: {top: '-7px', left: `${arrowX}px`},
+      left: {right: '-7px', top: `${arrowY}px`},
+      right: {left: '-7px', top: `${arrowY}px`},
     };
 
     return {

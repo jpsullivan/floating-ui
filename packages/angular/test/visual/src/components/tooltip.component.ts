@@ -3,7 +3,6 @@ import type {ElementRef} from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   input,
   signal,
   viewChild,
@@ -11,9 +10,9 @@ import {
 import {
   autoUpdate,
   flip,
+  injectFloating,
   offset,
   shift,
-  useFloating,
   type Placement,
 } from '../../../../src/index';
 import {ButtonComponent} from '../lib/button.component';
@@ -61,16 +60,16 @@ export class TooltipDemoComponent {
 
   protected readonly isOpen = signal(false);
 
-  private readonly floatingInstance = useFloating(
-    computed(() => this.reference().nativeElement),
-    computed(() => this.floating()?.nativeElement || null),
-    {
-      open: this.isOpen,
-      placement: this.placement,
-      middleware: [offset(8), flip(), shift({padding: 8})],
-      whileElementsMounted: autoUpdate,
-    },
-  );
+  private readonly floatingInstance = injectFloating({
+    open: this.isOpen,
+    placement: this.placement,
+    elements: () => ({
+      reference: this.reference().nativeElement,
+      floating: this.floating()?.nativeElement,
+    }),
+    middleware: [offset(8), flip(), shift({padding: 8})],
+    whileElementsMounted: autoUpdate,
+  });
 
   protected readonly floatingStyles = this.floatingInstance.floatingStyles;
 

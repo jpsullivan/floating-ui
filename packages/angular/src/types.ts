@@ -6,7 +6,8 @@ import type {
   ReferenceElement,
   Strategy,
 } from '@floating-ui/dom';
-import type {Signal} from '@angular/core';
+import type {Signal, ElementRef, WritableSignal} from '@angular/core';
+import type {DismissOptions} from './floating-dismiss';
 
 export type {
   AlignedPlacement,
@@ -52,7 +53,67 @@ export type {
 
 export type MaybeElement<T> = T | null | undefined;
 
-export interface UseFloatingOptions<
+export type FloatingEvents = {
+  emit<T extends string>(event: T, data?: any): void;
+  on(event: string, handler: (data: any) => void): void;
+  off(event: string, handler: (data: any) => void): void;
+};
+
+export type OpenChangeReason =
+  | 'outside-press'
+  | 'escape-key'
+  | 'ancestor-scroll'
+  | 'reference-press'
+  | 'click'
+  | 'hover'
+  | 'focus'
+  | 'focus-out'
+  | 'list-navigation'
+  | 'safe-polygon';
+
+export type FloatingRefs<T extends ReferenceElement = ReferenceElement> = {
+  reference: WritableSignal<T | null>;
+  floating: WritableSignal<FloatingElement | null>;
+  setReference: (node: T | null) => void;
+  setFloating: (node: FloatingElement | null) => void;
+};
+
+export type FloatingElements<T extends ReferenceElement = ReferenceElement> = {
+  reference: Signal<T | null>;
+  floating: Signal<FloatingElement | null>;
+};
+
+export type ElementInput<T = HTMLElement> =
+  | ElementRef<T>
+  | Signal<ElementRef<T> | null | undefined>
+  | Signal<T | null | undefined>
+  | (() => T | null | undefined);
+
+export interface FloatingContext<
+  T extends ReferenceElement = ReferenceElement,
+> {
+  open: Signal<boolean>;
+  onOpenChange: (
+    open: boolean,
+    event?: Event,
+    reason?: OpenChangeReason,
+  ) => void;
+  placement: Signal<Placement>;
+  strategy: Signal<Strategy>;
+  x: Signal<number>;
+  y: Signal<number>;
+  middlewareData: Signal<MiddlewareData>;
+  isPositioned: Signal<boolean>;
+  floatingStyles: Signal<{[key: string]: string}>;
+  update: () => void;
+  refs: FloatingRefs<T>;
+  elements: FloatingElements<T>;
+  events: FloatingEvents;
+  floatingId: string;
+  nodeId?: string;
+}
+
+export interface InjectFloatingOptions<
   T extends ReferenceElement = ReferenceElement,
 > {
   /**
@@ -88,9 +149,48 @@ export interface UseFloatingOptions<
     floating: FloatingElement,
     update: () => void,
   ) => () => void;
+  /**
+   * External elements to use instead of the refs.
+   * Can be an object with elements, or a function that returns elements.
+   */
+  elements?:
+    | {
+        reference?: ElementInput<T>;
+        floating?: ElementInput<FloatingElement>;
+      }
+    | (() => {
+        reference?: T | null | undefined;
+        floating?: FloatingElement | null | undefined;
+      });
+  /**
+   * Callback function called when the floating element open state changes.
+   */
+  onOpenChange?: (
+    open: boolean,
+    event?: Event,
+    reason?: OpenChangeReason,
+  ) => void;
+  /**
+   * Unique node ID when using nested floating elements.
+   */
+  nodeId?: string;
+  /**
+   * Options for dismissing the floating element.
+   */
+  dismiss?: DismissOptions | Signal<DismissOptions>;
+  /**
+   * Callback function called when the floating element should be dismissed.
+   */
+  onDismiss?: (restoreFocus?: boolean) => void;
+  /**
+   * Parent node ID for nested floating elements.
+   */
+  parentId?: string | Signal<string>;
 }
 
-export interface UseFloatingReturn {
+export interface InjectFloatingReturn<
+  T extends ReferenceElement = ReferenceElement,
+> {
   /**
    * The x-coordinate of the floating element.
    */
@@ -123,4 +223,20 @@ export interface UseFloatingReturn {
    * The function to update the floating element's position manually.
    */
   update: () => void;
+  /**
+   * Object containing reactive reference and floating element setters.
+   */
+  refs: FloatingRefs<T>;
+  /**
+   * Object containing reactive reference and floating element signals.
+   */
+  elements: FloatingElements<T>;
+  /**
+   * The floating context object containing all state and methods.
+   */
+  context: FloatingContext<T>;
+  /**
+   * The unique node ID for this floating element in the tree.
+   */
+  nodeId?: string;
 }
