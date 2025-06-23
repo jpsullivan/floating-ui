@@ -11,6 +11,7 @@ import {
 import {
   autoUpdate,
   flip,
+  injectDismiss,
   injectFloating,
   offset,
   shift,
@@ -24,7 +25,12 @@ import {ButtonComponent} from '../lib/button.component';
   imports: [NgStyle, forwardRef(() => PopoverDemoComponent)],
   template: `
     <span class="inline-block">
-      <span #reference (click)="togglePopover()" class="inline-block">
+      <span
+        #reference
+        (click)="togglePopover()"
+        (keydown)="onReferenceKeyDown($event)"
+        class="inline-block"
+      >
         <ng-content />
       </span>
 
@@ -36,6 +42,9 @@ import {ButtonComponent} from '../lib/button.component';
           role="dialog"
           [attr.aria-labelledby]="labelId"
           [attr.aria-describedby]="descriptionId"
+          (keydown)="onFloatingKeyDown($event)"
+          (mousedown)="onFloatingMouseDown($event)"
+          (mouseup)="onFloatingMouseUp($event)"
         >
           <h2 [id]="labelId" class="text-xl font-bold mb-2 text-gray-800">
             {{ title() }}
@@ -100,17 +109,26 @@ export class PopoverDemoComponent {
       reference: this.reference()?.nativeElement,
       floating: this.floating()?.nativeElement,
     }),
-    dismiss: {
-      escapeKey: true,
-      outsidePress: true,
-      restoreFocus: true,
-      escapeKeyBubbles: true,
-    },
     parentId: this.parentId(),
-    onDismiss: () => {
-      this.isOpen.set(false);
-      // Focus restoration is handled by the library
+    onOpenChange: (open: boolean, event?: Event, reason?: string) => {
+      if (!open) {
+        this.isOpen.set(false);
+
+        // Restore focus to reference element on escape key
+        if (reason === 'escape-key') {
+          const refEl = this.reference()?.nativeElement;
+          if (refEl instanceof HTMLElement) {
+            refEl.focus();
+          }
+        }
+      }
     },
+  });
+
+  private readonly dismissProps = injectDismiss(this.floatingInstance.context, {
+    escapeKey: true,
+    outsidePress: true,
+    bubbles: {escapeKey: true},
   });
 
   protected readonly floatingStyles = this.floatingInstance.floatingStyles;
@@ -122,6 +140,34 @@ export class PopoverDemoComponent {
 
   protected closePopover(): void {
     this.isOpen.set(false);
+  }
+
+  protected onReferenceKeyDown(event: KeyboardEvent): void {
+    const handler = this.dismissProps.reference?.onKeyDown;
+    if (handler) {
+      handler(event);
+    }
+  }
+
+  protected onFloatingKeyDown(event: KeyboardEvent): void {
+    const handler = this.dismissProps.floating?.onKeyDown;
+    if (handler) {
+      handler(event);
+    }
+  }
+
+  protected onFloatingMouseDown(event: MouseEvent): void {
+    const handler = this.dismissProps.floating?.onMouseDown;
+    if (handler) {
+      handler(event);
+    }
+  }
+
+  protected onFloatingMouseUp(event: MouseEvent): void {
+    const handler = this.dismissProps.floating?.onMouseUp;
+    if (handler) {
+      handler(event);
+    }
   }
 }
 

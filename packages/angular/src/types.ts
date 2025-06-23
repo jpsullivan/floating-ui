@@ -7,7 +7,6 @@ import type {
   Strategy,
 } from '@floating-ui/dom';
 import type {Signal, ElementRef, WritableSignal} from '@angular/core';
-import type {DismissOptions} from './floating-dismiss';
 
 export type {
   AlignedPlacement,
@@ -174,14 +173,6 @@ export interface InjectFloatingOptions<
    * Unique node ID when using nested floating elements.
    */
   nodeId?: string;
-  /**
-   * Options for dismissing the floating element.
-   */
-  dismiss?: DismissOptions | Signal<DismissOptions>;
-  /**
-   * Callback function called when the floating element should be dismissed.
-   */
-  onDismiss?: (restoreFocus?: boolean) => void;
   /**
    * Parent node ID for nested floating elements.
    */

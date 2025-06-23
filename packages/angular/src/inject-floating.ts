@@ -14,7 +14,6 @@ import type {
 } from '@floating-ui/dom';
 import {computePosition} from '@floating-ui/dom';
 
-import {injectFloatingDismiss} from './floating-dismiss';
 import {injectFloatingNode} from './floating-tree';
 import {signalProxy} from './signal-proxy';
 import type {
@@ -235,7 +234,6 @@ export function injectFloating<T extends ReferenceElement = ReferenceElement>(
   });
 
   let whileElementsMountedCleanup: (() => void) | undefined;
-  let dismissHandler: {cleanup: () => void} | undefined;
 
   // Set up tree node for nested element management
   const parentIdOption = computed(() =>
@@ -243,7 +241,7 @@ export function injectFloating<T extends ReferenceElement = ReferenceElement>(
   );
   const {
     nodeId,
-    tree,
+    tree: _tree,
     cleanup: nodeCleanup,
   } = injectFloatingNode(openOption, parentIdOption());
 
@@ -267,41 +265,6 @@ export function injectFloating<T extends ReferenceElement = ReferenceElement>(
     floatingId,
     nodeId,
   };
-
-  // Set up dismiss functionality if enabled
-  if (options.dismiss && (options.onDismiss || options.onOpenChange)) {
-    const dismissOption = computed(() => getSignalValue(options.dismiss ?? {}));
-
-    const referenceSignal = computed(() => {
-      const el = referenceElement();
-      return el instanceof HTMLElement ? el : null;
-    });
-
-    const floatingSignal = computed(() => {
-      const el = floatingElement();
-      return el instanceof HTMLElement ? el : null;
-    });
-
-    dismissHandler = injectFloatingDismiss(
-      referenceSignal,
-      floatingSignal,
-      openOption,
-      (restoreFocus = false) => {
-        if (restoreFocus) {
-          // Restore focus to reference element
-          const refEl = referenceElement();
-          if (refEl instanceof HTMLElement) {
-            refEl.focus();
-          }
-        }
-        options.onDismiss?.(restoreFocus);
-        context.onOpenChange(false, undefined, 'outside-press');
-      },
-      dismissOption,
-      tree,
-      nodeId,
-    );
-  }
 
   function update() {
     const refEl = referenceElement();
@@ -383,7 +346,6 @@ export function injectFloating<T extends ReferenceElement = ReferenceElement>(
   // Cleanup on destroy
   destroyRef.onDestroy(() => {
     cleanup();
-    dismissHandler?.cleanup();
     nodeCleanup();
   });
 
