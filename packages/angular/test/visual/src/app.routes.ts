@@ -1,6 +1,7 @@
 import type {Routes} from '@angular/router';
 import {ArrowComponent} from './components/arrow.component';
 import {HomeComponent} from './components/home.component';
+import {OverlayComponent} from './components/overlay.component';
 import {PopoverComponent} from './components/popover.component';
 import {TooltipComponent} from './components/tooltip.component';
 
@@ -20,5 +21,9 @@ export const routes: Routes = [
   {
     path: 'arrow',
     component: ArrowComponent,
+  },
+  {
+    path: 'overlay',
+    component: OverlayComponent,
   },
 ];

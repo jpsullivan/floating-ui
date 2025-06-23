@@ -57,6 +57,7 @@ export class App {
     {path: 'tooltip', label: 'Tooltip'},
     {path: 'popover', label: 'Popover'},
     {path: 'arrow', label: 'Arrow'},
+    {path: 'overlay', label: 'Overlay'},
   ];
 
   protected isActiveRoute(path: string): boolean {

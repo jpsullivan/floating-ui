@@ -16,6 +16,11 @@ export {
 export {arrow} from './arrow';
 export {createArrowPath, type ArrowPathOptions} from './floating-arrow';
 export {
+  injectFloatingOverlay,
+  type FloatingOverlayOptions,
+  type FloatingOverlayStyles,
+} from './floating-overlay';
+export {
   FloatingTreeService,
   generateNodeId,
   injectFloatingNode,

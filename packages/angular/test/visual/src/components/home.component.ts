@@ -35,6 +35,11 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
               <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
               <strong>Arrow:</strong> Floating elements with pointing arrows
             </li>
+            <li class="flex items-center">
+              <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+              <strong>Overlay:</strong> Modal dialogs with backdrop and scroll
+              locking
+            </li>
           </ul>
         </div>
 
