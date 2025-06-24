@@ -16,13 +16,13 @@ import {
   shift,
   type Placement,
 } from '@floating-ui/dom';
-import {injectFloating, createArrowPath} from '../../../../src/index';
+import {FloatingArrowComponent, injectFloating} from '../../../../src/index';
 import {ButtonComponent} from '../lib/button.component';
 
 @Component({
   selector: 'app-arrow-demo',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgStyle],
+  imports: [NgStyle, FloatingArrowComponent],
   template: `
     <span class="inline-block">
       <span
@@ -45,19 +45,13 @@ import {ButtonComponent} from '../lib/button.component';
         >
           {{ label() }}
 
-          <!-- Arrow SVG with React-like dimensions and path -->
-          <svg
+          <fui-floating-arrow
             #arrow
-            class="absolute text-gray-900"
-            [ngStyle]="arrowStyles()"
-            [attr.width]="14"
-            [attr.height]="14"
-            [attr.viewBox]="'0 0 14 7'"
-            style="pointer-events: none;"
-            aria-hidden="true"
-          >
-            <path [attr.d]="arrowPath()" fill="currentColor" />
-          </svg>
+            [context]="floatingInstance.context"
+            [width]="14"
+            [height]="7"
+            [fill]="'rgb(17 24 39)'"
+          />
         </div>
       }
     </span>
@@ -71,11 +65,11 @@ export class ArrowDemoComponent {
     viewChild.required<ElementRef<HTMLElement>>('reference');
   protected readonly floating =
     viewChild<ElementRef<HTMLDivElement>>('floating');
-  protected readonly arrowElement = viewChild<ElementRef<SVGElement>>('arrow');
+  protected readonly arrowElement = viewChild<FloatingArrowComponent>('arrow');
 
   protected readonly isOpen = signal(false);
 
-  private readonly floatingInstance = injectFloating({
+  readonly floatingInstance = injectFloating({
     open: this.isOpen,
     placement: this.placement,
     elements: () => ({
@@ -83,7 +77,7 @@ export class ArrowDemoComponent {
       floating: this.floating()?.nativeElement,
     }),
     middleware: computed(() => {
-      const arrowEl = this.arrowElement()?.nativeElement;
+      const arrowEl = this.arrowElement()?.arrowElement()?.nativeElement;
       return [
         offset(8),
         flip(),
@@ -95,44 +89,6 @@ export class ArrowDemoComponent {
   });
 
   protected readonly floatingStyles = this.floatingInstance.floatingStyles;
-  protected readonly middlewareData = this.floatingInstance.middlewareData;
-  protected readonly placement_actual = this.floatingInstance.placement;
-
-  protected readonly arrowPath = computed(() =>
-    createArrowPath({width: 14, height: 7, tipRadius: 0}),
-  );
-
-  protected readonly arrowStyles = computed(() => {
-    const arrowData = this.middlewareData().arrow;
-    const actualPlacement = this.placement_actual();
-
-    if (!arrowData) {
-      return {};
-    }
-
-    const [side] = actualPlacement.split('-');
-    const arrowX = arrowData.x ?? 0;
-    const arrowY = arrowData.y ?? 0;
-
-    const rotations = {
-      top: '',
-      bottom: 'rotate(180deg)',
-      left: 'rotate(-90deg)',
-      right: 'rotate(90deg)',
-    };
-
-    const positions = {
-      top: {bottom: '-7px', left: `${arrowX}px`},
-      bottom: {top: '-7px', left: `${arrowX}px`},
-      left: {right: '-7px', top: `${arrowY}px`},
-      right: {left: '-7px', top: `${arrowY}px`},
-    };
-
-    return {
-      transform: rotations[side as keyof typeof rotations] || 'rotate(0deg)',
-      ...positions[side as keyof typeof positions],
-    };
-  });
 
   protected showTooltip(): void {
     this.isOpen.set(true);

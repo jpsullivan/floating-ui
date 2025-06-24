@@ -15,10 +15,13 @@ export {
 } from '@floating-ui/dom';
 export {arrow} from './arrow';
 export {
+  FloatingArrowComponent,
+  type FloatingArrowProps,
+} from './components/FloatingArrow';
+export {
   FloatingOverlayComponent,
   type FloatingOverlayProps,
 } from './components/FloatingOverlay';
-export {createArrowPath, type ArrowPathOptions} from './floating-arrow';
 export {
   FloatingTreeService,
   generateNodeId,
