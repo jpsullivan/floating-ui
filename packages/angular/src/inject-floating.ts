@@ -316,7 +316,7 @@ export function injectFloating<T extends ReferenceElement = ReferenceElement>(
 
     if (refEl != null && floatEl != null) {
       whileElementsMountedCleanup = whileElementsMountedOption(
-        refEl as T,
+        refEl,
         floatEl,
         update,
       );

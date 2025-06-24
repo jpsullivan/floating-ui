@@ -1,3 +1,4 @@
+import type {ElementRef, Signal, WritableSignal} from '@angular/core';
 import type {
   FloatingElement,
   Middleware,
@@ -6,7 +7,6 @@ import type {
   ReferenceElement,
   Strategy,
 } from '@floating-ui/dom';
-import type {Signal, ElementRef, WritableSignal} from '@angular/core';
 
 export type {
   AlignedPlacement,
@@ -144,7 +144,7 @@ export interface InjectFloatingOptions<
    * Callback to handle mounting/unmounting of the elements.
    */
   whileElementsMounted?: (
-    reference: T,
+    reference: ReferenceElement,
     floating: FloatingElement,
     update: () => void,
   ) => () => void;
