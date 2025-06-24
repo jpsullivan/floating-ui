@@ -14,12 +14,11 @@ export {
   size,
 } from '@floating-ui/dom';
 export {arrow} from './arrow';
-export {createArrowPath, type ArrowPathOptions} from './floating-arrow';
 export {
-  injectFloatingOverlay,
-  type FloatingOverlayOptions,
-  type FloatingOverlayStyles,
-} from './floating-overlay';
+  FloatingOverlayComponent,
+  type FloatingOverlayProps,
+} from './components/FloatingOverlay';
+export {createArrowPath, type ArrowPathOptions} from './floating-arrow';
 export {
   FloatingTreeService,
   generateNodeId,
@@ -34,5 +33,5 @@ export {
   type InjectDismissOptions,
 } from './inject-dismiss';
 export {injectFloating} from './inject-floating';
-export {signalProxy, type MapToSignals} from './signal-proxy';
 export type * from './types';
+export {signalProxy, type MapToSignals} from './utils/signal-proxy';

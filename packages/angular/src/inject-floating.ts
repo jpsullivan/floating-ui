@@ -15,7 +15,6 @@ import type {
 import {computePosition} from '@floating-ui/dom';
 
 import {injectFloatingNode} from './floating-tree';
-import {signalProxy} from './signal-proxy';
 import type {
   ElementInput,
   FloatingContext,
@@ -27,6 +26,7 @@ import type {
   OpenChangeReason,
 } from './types';
 import {getDPR, roundByDPR, unwrapElement} from './utils';
+import {signalProxy} from './utils/signal-proxy';
 
 function isSignal<T>(value: T | Signal<T>): value is Signal<T> {
   return typeof value === 'function';
