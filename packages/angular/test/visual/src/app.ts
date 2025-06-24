@@ -12,7 +12,7 @@ interface Route {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, RouterLink, NgClass],
   template: `
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen max-h-screen bg-gray-50 overflow-y-auto">
       <!-- Sidebar Navigation -->
       <nav
         class="fixed top-0 left-0 flex-col hidden h-full p-8 overflow-y-auto bg-slate-100 lg:w-64 lg:flex"
@@ -43,8 +43,10 @@ interface Route {
       </nav>
 
       <!-- Main Content -->
-      <main class="p-12 lg:ml-64">
-        <router-outlet />
+      <main class="p-12 lg:ml-64 flex">
+        <div class="flex-1 overflow-y-auto">
+          <router-outlet />
+        </div>
       </main>
     </div>
   `,

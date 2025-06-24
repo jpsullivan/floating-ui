@@ -1,19 +1,108 @@
-import {ChangeDetectionStrategy, Component, effect, input} from '@angular/core';
-import {injectFloatingOverlay} from '../floating-overlay';
-import {injectMutation} from '../utils/inject-mutation';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+} from '@angular/core';
+import {injectLayoutMutation} from '../utils/inject-layout-mutation';
+
+let lockCount = 0;
+const scrollbarProperty = '--floating-ui-scrollbar-width';
+
+function getPlatform(): string {
+  return navigator.platform || 'unknown';
+}
+
+function enableScrollLock(): () => void {
+  const platform = getPlatform();
+  const isIOS =
+    /iP(hone|ad|od)|iOS/.test(platform) ||
+    // iPads can claim to be MacIntel
+    (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const bodyStyle = document.body.style;
+  // RTL <body> scrollbar
+  const scrollbarX =
+    Math.round(document.documentElement.getBoundingClientRect().left) +
+    document.documentElement.scrollLeft;
+  const paddingProp = scrollbarX ? 'paddingLeft' : 'paddingRight';
+  const scrollbarWidth =
+    window.innerWidth - document.documentElement.clientWidth;
+  const scrollX = bodyStyle.left ? parseFloat(bodyStyle.left) : window.scrollX;
+  const scrollY = bodyStyle.top ? parseFloat(bodyStyle.top) : window.scrollY;
+
+  bodyStyle.overflow = 'hidden';
+  bodyStyle.setProperty(scrollbarProperty, `${scrollbarWidth}px`);
+
+  if (scrollbarWidth) {
+    (bodyStyle as any)[paddingProp] = `${scrollbarWidth}px`;
+  }
+
+  // Only iOS doesn't respect `overflow: hidden` on document.body, and this
+  // technique has fewer side effects.
+  if (isIOS) {
+    // iOS 12 does not support `visualViewport`.
+    const offsetLeft = window.visualViewport?.offsetLeft || 0;
+    const offsetTop = window.visualViewport?.offsetTop || 0;
+
+    Object.assign(bodyStyle, {
+      position: 'fixed',
+      top: `${-(scrollY - Math.floor(offsetTop))}px`,
+      left: `${-(scrollX - Math.floor(offsetLeft))}px`,
+      right: '0',
+    });
+  }
+
+  return () => {
+    Object.assign(bodyStyle, {
+      overflow: '',
+      [paddingProp]: '',
+    });
+    bodyStyle.removeProperty(scrollbarProperty);
+
+    if (isIOS) {
+      Object.assign(bodyStyle, {
+        position: '',
+        top: '',
+        left: '',
+        right: '',
+      });
+      window.scrollTo(scrollX, scrollY);
+    }
+  };
+}
+
+let cleanup = () => {};
+
+export interface FloatingOverlayProps {
+  /**
+   * Whether the overlay should lock scrolling on the document body.
+   * @default false
+   */
+  lockScroll?: boolean;
+}
 
 /**
- * A standalone Angular component that provides base styling for a fixed overlay element
- * to dim content or block pointer events behind a floating element.
+ * Provides base styling for a fixed overlay element to dim content or block
+ * pointer events behind a floating element.
+ * It's a regular `<div>`, so it can be styled via any CSS solution you prefer.
  * This is the Angular equivalent of React's FloatingOverlay component.
  * @see https://floating-ui.com/docs/FloatingOverlay
  */
 @Component({
   selector: 'floating-overlay',
-  template: `
-    <div [ngStyle]="overlayStyles()">
-      <ng-content />
-    </div>
+  template: `<ng-content />`,
+  styles: `
+    :host {
+      display: block;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      overflow: auto;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -24,39 +113,36 @@ export class FloatingOverlayComponent {
    */
   lockScroll = input<boolean>(false);
 
-  private readonly mutations = injectMutation({
-    observerOptions: {
-      attributes: true,
-      childList: true,
-      subtree: true,
-    },
-  });
-
-  private readonly overlayInstance = injectFloatingOverlay({
-    lockScroll: this.lockScroll(),
-  });
-
-  protected readonly overlayStyles = this.overlayInstance.overlayStyles;
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly layoutMutation = injectLayoutMutation();
 
   constructor() {
+    // Handle scroll locking effect
     effect(() => {
-      const mutationRecords = this.mutations();
-      if (mutationRecords.length > 0) {
-        // React to DOM mutations that might affect overlay behavior
-        // This ensures the overlay properly handles dynamic changes to the DOM
-        // such as content changes that might affect scrollbar calculations
-        const hasRelevantChanges = mutationRecords.some(
-          (record) =>
-            record.type === 'childList' ||
-            (record.type === 'attributes' &&
-              (record.attributeName === 'style' ||
-                record.attributeName === 'class')),
-        );
+      this.layoutMutation();
 
-        if (hasRelevantChanges && this.lockScroll()) {
-          // Trigger change detection to ensure overlay styles are recalculated
-          // when DOM changes occur that might affect scrollbar visibility
+      const shouldLock = this.lockScroll();
+      if (!shouldLock) return;
+
+      lockCount++;
+      if (lockCount === 1) {
+        cleanup = enableScrollLock();
+      }
+
+      // cleanup function for the effect
+      return () => {
+        lockCount--;
+        if (lockCount === 0) {
+          cleanup();
         }
+      };
+    });
+
+    // cleanup on component destruction
+    this.destroyRef.onDestroy(() => {
+      lockCount--;
+      if (lockCount === 0) {
+        cleanup();
       }
     });
   }
