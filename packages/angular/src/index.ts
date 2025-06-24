@@ -23,6 +23,10 @@ export {
   type FloatingOverlayProps,
 } from './components/FloatingOverlay';
 export {
+  FocusGuardComponent,
+  type FocusGuardProps,
+} from './components/FocusGuard';
+export {
   FloatingTreeService,
   generateNodeId,
   injectFloatingNode,
@@ -37,4 +41,12 @@ export {
 } from './inject-dismiss';
 export {injectFloating} from './inject-floating';
 export type * from './types';
+export {
+  getPlatform,
+  getUserAgent,
+  isAndroid,
+  isJSDOM,
+  isMac,
+  isSafari,
+} from './utils/platform';
 export {signalProxy, type MapToSignals} from './utils/signal-proxy';
