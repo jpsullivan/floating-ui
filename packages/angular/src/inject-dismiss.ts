@@ -2,7 +2,7 @@ import {DestroyRef, effect, inject, signal, type Signal} from '@angular/core';
 import type {FloatingElement, ReferenceElement} from '@floating-ui/dom';
 import {getOverflowAncestors} from '@floating-ui/dom';
 import {isElement} from '@floating-ui/utils/dom';
-import {type FloatingTreeManager} from './floating-tree';
+import {type FloatingTreeService} from './components/FloatingTree';
 import type {FloatingContext, OpenChangeReason} from './types';
 
 function getDocument(node: Element | null) {
@@ -323,7 +323,7 @@ export function injectFloatingDismiss(
   open: Signal<boolean>,
   onDismiss: (restoreFocus?: boolean) => void,
   options: any = {},
-  tree?: FloatingTreeManager,
+  tree?: FloatingTreeService,
   nodeId?: string,
 ): {cleanup: () => void} {
   // Create a minimal context for legacy support

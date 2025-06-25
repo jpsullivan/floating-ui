@@ -14,7 +14,7 @@ import type {
 } from '@floating-ui/dom';
 import {computePosition} from '@floating-ui/dom';
 
-import {injectFloatingNode} from './floating-tree';
+import {useFloatingNodeId} from './components/FloatingTree';
 import type {
   ElementInput,
   FloatingContext,
@@ -241,9 +241,8 @@ export function injectFloating<T extends ReferenceElement = ReferenceElement>(
   );
   const {
     nodeId,
-    tree: _tree,
     cleanup: nodeCleanup,
-  } = injectFloatingNode(openOption, parentIdOption());
+  } = useFloatingNodeId(parentIdOption());
 
   // Context needs to be created after all signals are defined
   const context: FloatingContext<T> = {

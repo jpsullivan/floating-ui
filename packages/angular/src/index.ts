@@ -32,12 +32,17 @@ export {
   type FocusManagerState,
 } from './components/FloatingPortal';
 export {
+  FloatingTreeComponent,
+  FloatingNodeComponent,
   FloatingTreeService,
-  generateNodeId,
-  injectFloatingNode,
-  shouldEscapeKeyBubble,
-  type FloatingTreeManager,
-} from './floating-tree';
+  FloatingNodeService,
+  injectFloatingParentNodeId,
+  injectFloatingTree,
+  injectFloatingNodeId,
+  useFloatingNodeId,
+  type FloatingNodeType,
+  type FloatingTreeType,
+} from './components/FloatingTree';
 export {
   injectDismiss,
   injectFloatingDismiss,
@@ -56,3 +61,4 @@ export {
 } from './utils/platform';
 export {signalProxy, type MapToSignals} from './utils/signal-proxy';
 export {createAttribute} from './utils';
+export {createEventEmitter, type FloatingEvents} from './utils/event-emitter';

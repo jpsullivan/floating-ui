@@ -60,6 +60,7 @@ export class App {
     {path: 'arrow', label: 'Arrow'},
     {path: 'overlay', label: 'Overlay'},
     {path: 'portal', label: 'Portal'},
+    {path: 'tree', label: 'FloatingTree'},
   ];
 
   protected isActiveRoute(path: string): boolean {

@@ -5,6 +5,7 @@ import {OverlayComponent} from './components/overlay.component';
 import {PopoverComponent} from './components/popover.component';
 import {PortalComponent} from './components/portal.component';
 import {TooltipComponent} from './components/tooltip.component';
+import {TreeComponent} from './components/tree.component';
 
 export const routes: Routes = [
   {
@@ -30,5 +31,9 @@ export const routes: Routes = [
   {
     path: 'portal',
     component: PortalComponent,
+  },
+  {
+    path: 'tree',
+    component: TreeComponent,
   },
 ];
