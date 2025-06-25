@@ -13,3 +13,7 @@ export function roundByDPR(element: Element, value: number): number {
 export function unwrapElement<T>(element: T | null | undefined): T | null {
   return element || null;
 }
+
+export function createAttribute(name: string): string {
+  return `data-floating-ui-${name}`;
+}

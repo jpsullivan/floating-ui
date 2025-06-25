@@ -27,6 +27,11 @@ export {
   type FocusGuardProps,
 } from './components/FocusGuard';
 export {
+  FloatingPortalComponent,
+  type FloatingPortalProps,
+  type FocusManagerState,
+} from './components/FloatingPortal';
+export {
   FloatingTreeService,
   generateNodeId,
   injectFloatingNode,
@@ -50,3 +55,4 @@ export {
   isSafari,
 } from './utils/platform';
 export {signalProxy, type MapToSignals} from './utils/signal-proxy';
+export {createAttribute} from './utils';

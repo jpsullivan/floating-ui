@@ -28,6 +28,7 @@ export interface FocusGuardProps {
  */
 @Component({
   selector: 'fui-focus-guard',
+  standalone: true,
   template: `
     <span
       #guardElement

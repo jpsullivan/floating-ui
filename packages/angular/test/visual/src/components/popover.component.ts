@@ -21,7 +21,6 @@ import {ButtonComponent} from '../lib/button.component';
 
 @Component({
   selector: 'app-popover-demo',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgStyle, forwardRef(() => PopoverDemoComponent)],
   template: `
     <span class="inline-block">
@@ -80,6 +79,7 @@ import {ButtonComponent} from '../lib/button.component';
       }
     </span>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PopoverDemoComponent {
   title = input.required<string>();

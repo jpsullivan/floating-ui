@@ -1,4 +1,3 @@
-import {NgClass} from '@angular/common';
 import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
 
@@ -9,8 +8,7 @@ interface Route {
 
 @Component({
   selector: 'app-root',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, NgClass],
+  imports: [RouterOutlet, RouterLink],
   template: `
     <div class="min-h-screen max-h-screen bg-gray-50 overflow-y-auto">
       <!-- Sidebar Navigation -->
@@ -30,7 +28,7 @@ interface Route {
               <a
                 [routerLink]="route.path === '' ? '/' : '/' + route.path"
                 class="block py-2 px-3 rounded transition-colors hover:bg-slate-200"
-                [ngClass]="{
+                [class]="{
                   'bg-slate-200 font-semibold': isActiveRoute(route.path),
                   'text-gray-700': !isActiveRoute(route.path)
                 }"
@@ -50,6 +48,7 @@ interface Route {
       </main>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   private readonly router = inject(Router);
@@ -60,6 +59,7 @@ export class App {
     {path: 'popover', label: 'Popover'},
     {path: 'arrow', label: 'Arrow'},
     {path: 'overlay', label: 'Overlay'},
+    {path: 'portal', label: 'Portal'},
   ];
 
   protected isActiveRoute(path: string): boolean {

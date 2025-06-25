@@ -21,7 +21,6 @@ import {ButtonComponent} from '../lib/button.component';
 
 @Component({
   selector: 'app-arrow-demo',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgStyle, FloatingArrowComponent],
   template: `
     <span class="inline-block">
@@ -56,6 +55,7 @@ import {ButtonComponent} from '../lib/button.component';
       }
     </span>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArrowDemoComponent {
   label = input.required<string>();

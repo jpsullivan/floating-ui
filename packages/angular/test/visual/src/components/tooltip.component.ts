@@ -1,4 +1,3 @@
-import {NgClass, NgStyle} from '@angular/common';
 import type {ElementRef} from '@angular/core';
 import {
   ChangeDetectionStrategy,
@@ -19,8 +18,6 @@ import {ButtonComponent} from '../lib/button.component';
 
 @Component({
   selector: 'app-tooltip-demo',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgStyle, NgClass],
   template: `
     <span
       #reference
@@ -36,9 +33,9 @@ import {ButtonComponent} from '../lib/button.component';
     @if (isOpen()) {
       <div
         #floating
-        [ngStyle]="floatingStyles()"
+        [style]="floatingStyles()"
         class="bg-gray-900 text-white px-2 py-1 rounded text-sm whitespace-nowrap z-50 transition-opacity duration-200"
-        [ngClass]="{
+        [class]="{
           'opacity-100': isOpen(),
           'opacity-0': !isOpen()
         }"
@@ -48,6 +45,7 @@ import {ButtonComponent} from '../lib/button.component';
       </div>
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TooltipDemoComponent {
   label = input.required<string>();

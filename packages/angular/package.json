@@ -63,7 +63,8 @@
   },
   "dependencies": {
     "@floating-ui/dom": "^1.0.0",
-    "@floating-ui/utils": "workspace:^"
+    "@floating-ui/utils": "workspace:^",
+    "tabbable": "^6.0.0"
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^1.18.0",

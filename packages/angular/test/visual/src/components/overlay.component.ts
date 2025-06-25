@@ -20,8 +20,6 @@ import {ButtonComponent} from '../lib/button.component';
 
 @Component({
   selector: 'app-overlay-demo',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FloatingOverlayComponent],
   template: `
     <span class="inline-block">
@@ -113,6 +111,7 @@ import {ButtonComponent} from '../lib/button.component';
       }
     </span>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OverlayDemoComponent {
   title = input.required<string>();

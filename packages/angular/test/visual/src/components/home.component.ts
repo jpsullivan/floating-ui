@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 
 @Component({
   selector: 'app-home',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="max-w-4xl">
       <h1 class="text-5xl font-bold mb-6 text-gray-800">
@@ -54,5 +53,6 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
       </div>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {}
